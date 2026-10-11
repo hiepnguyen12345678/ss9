@@ -1,0 +1,72 @@
+
+# 🚀 Smart-Farm IoT System
+
+*Hệ thống giám sát và tự động hóa tưới nước thông minh chuyên dụng cho trang trại Lan, vận hành trên nền tảng Raspberry Pi.*
+
+## ⚙️ Hướng dẫn cài đặt
+
+```bash
+sudo apt update && sudo apt install -y python3-pip git
+pip3 install Adafruit_DHT
+```
+## ✅ Tính năng hệ thống
+
+-   [ ] Giám sát nhiệt độ và độ ẩm không khí thời gian thực qua cảm biến DHT22.
+-   [ ] Tự động hóa lịch trình tưới nước định kỳ thông qua Cronjob.
+-   [ ] Ghi nhận nhật ký (log) dữ liệu môi trường dưới định dạng tối ưu.
+-   [ ] Cảnh báo thông minh khi độ ẩm xuống mức nguy hiểm cho hoa Lan.
+    
+## 📊 Bảng thông số kỹ thuật
+
+**Thành phần**
+
+**Thiết bị phần cứng**
+
+**Thông số kỹ thuật / Chức năng**
+
+**Cảm biến**
+
+DHT22 (AM2302)
+Đo nhiệt độ (-40 đến 80°C) và độ ẩm (0-100%)
+
+**Vi điều khiển**
+
+Raspberry Pi 4 Model B
+Xử lý trung tâm, kết nối GPIO và chạy script Python
+
+**Thiết bị chấp hành**
+
+Relay 1 kênh 5V
+
+Đóng/mở nguồn điện cho máy bơm nước
+
+> **Vòng đời lệnh tưới Lan (Fetch – Decode – Execute):**
+> 
+> 1.  **Fetch (Đọc lệnh):** CPU trên Raspberry Pi nạp lệnh điều khiển từ tập lệnh Python định kỳ trong bộ nhớ.
+>     
+> 2.  **Decode (Giải mã):** Bộ điều khiển giải mã tín hiệu để xác định yêu cầu kiểm tra độ ẩm và kích hoạt chân GPIO số 4.
+>     
+> 3.  **Execute (Thực thi):** Gửi dòng điện kích hoạt Relay đóng mạch, bật máy bơm nước tưới cho vườn Lan.
+>     
+
+## 🔺 Mô hình kim tự tháp DIKW trong Smart-Farm
+
+1.  **Data (Dữ liệu thô):** Các con số rời rạc từ cảm biến trả về (Ví dụ: `Temperature: 32.5°C, Humidity: 55%`).
+    
+2.  **Information (Thông tin có ngữ cảnh):** Dữ liệu được xử lý và gắn nhãn (Ví dụ: "Độ ẩm 55% lúc 14:00 là thấp hơn ngưỡng tiêu chuẩn cho hoa Lan").
+    
+3.  **Knowledge (Tri thức):** Phân tích quy luật sinh trưởng (Ví dụ: "Lan hồ điệp cần độ ẩm > 70% vào buổi trưa nắng nóng để tránh khô héo").
+    
+4.  **Wisdom (Hành động khôn ngoan):** Hệ thống tự động ra quyết định kích hoạt máy bơm nước ngay lập tức để bảo vệ cây trồng.
+## 💢Lưu ý
+```markdown
+## ⚠️ Lưu ý quan trọng (Xử lý sự cố tràn RAM do tệp nhật ký)
+
+* **Nguyên nhân:** Khi hệ thống ghi log quá nhiều vào bộ nhớ đệm (RAM) mà không giải phóng, thiết bị có thể bị tràn RAM, gây chậm hoặc sập hệ thống.
+* **Cách xử lý an toàn:**
+  1. Dừng tiến trình ghi log tạm thời bằng lệnh: `sudo systemctl stop smartfarm-logger`
+  2. Xóa bớt các tệp nhật ký tạm trong bộ nhớ đệm hoặc cấu hình lại để ghi trực tiếp tệp log ra thẻ nhớ SD thay vì giữ trên RAM.
+  3. Khởi động lại dịch vụ: `sudo systemctl start smartfarm-logger`
+  4. **Kiểm tra thành công:** Chạy lệnh `free -h` để xác nhận dung lượng RAM đã được giải phóng và ổn định trở lại.
+
+```
